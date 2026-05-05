@@ -1,8 +1,4 @@
-loadstring([[
-    function LPH_NO_VIRTUALIZE(f) return f end;
-]])();
-
-local version = LRM_ScriptVersion and "v" .. table.concat(LRM_ScriptVersion:split(""), ".") or "Dev Version"
+local version = "0.0.0.1"
 local ZyphraxHub = game:HttpGet("https://raw.githubusercontent.com/Moonshall/ZyphraxHub/refs/heads/main/mainui.lua")
 local ZyphraxHub = loadstring(ZyphraxHub)()
 local IsOnMobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, game:GetService("UserInputService"):GetPlatform())
@@ -12,7 +8,7 @@ local WindowSize = IsOnMobile and UDim2.fromOffset(528, 334) or UDim2.fromOffset
 local Window = ZyphraxHub:CreateWindow({
     Title = "ZyphraxHub",
     Icon = "rbxassetid://125623993645104",
-    Author = (premium and "Premium" or "99 NITF") .. " - " .. version,
+    Author = "99 NITF - " .. version,
     Folder = "ZyphraxHub",
     Size = WindowSize,
     LiveSearchDropdown = true,
