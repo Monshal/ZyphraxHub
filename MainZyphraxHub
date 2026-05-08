@@ -1,0 +1,91 @@
+
+
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer and game.Players.LocalPlayer.Character
+if not game:FindFirstChild("CoreGui") then game.Loaded:Wait() end
+
+-- Game Detection Database
+local gameScripts = {
+
+    [142823291] = "mm2",               -- Murder Mystery 2
+    [79546208627805] = "99night",      -- 99 Nights in the Forest (Lobby)
+    [126509999114328] = "99night",     -- 99 Nights in the Forest (Game)
+    [2753915549] = "bloxfruits",       -- Blox Fruits (Sea 1)
+    [4442272183] = "bloxfruits",       -- Blox Fruits (Sea 2)
+    [7449423635] = "bloxfruits",       -- Blox Fruits (Sea 3)
+    [85211729168715] = "bloxfruits",   -- Blox Fruits
+    [79091703265657] = "bloxfruits",   -- Blox Fruits
+    [100117331123089] = "bloxfruits"   -- Blox Fruits
+}
+
+local function getGameScript()
+    local placeId = game.PlaceId
+    local scriptName = gameScripts[placeId]
+    
+    if not scriptName then
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "⚠️ ZyphraxHub",
+            Text = "Unknown Game: PlaceID " .. placeId,
+            Icon = "rbxassetid://125623993645104",
+            Duration = 3
+        })
+        return nil
+    end
+    
+    return scriptName
+end
+
+local scriptUrls = {
+    ["mm2"] = "https://raw.githubusercontent.com/Monshal/ZyphraxHub/refs/heads/main/mm2.lua",
+    ["99night"] = "https://raw.githubusercontent.com/Monshal/ZyphraxHub/refs/heads/main/99night.lua",
+    ["bloxfruits"] = "https://raw.githubusercontent.com/Monshal/ZyphraxHub/refs/heads/main/bloxfruits.lua"
+}
+
+local function loadGameScript(scriptName)
+    local scriptUrl = scriptUrls[scriptName]
+    
+    if not scriptUrl then
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "❌ ZyphraxHub",
+            Text = "Script URL not found for: " .. scriptName,
+            Icon = "rbxassetid://125623993645104",
+            Duration = 5
+        })
+        return
+    end
+    
+    -- Show loading notification
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "📥 ZyphraxHub",
+        Text = "Loading " .. scriptName .. " script...",
+        Icon = "rbxassetid://125623993645104",
+        Duration = 2
+    })
+    
+    -- Attempt to load the script from GitHub
+    local success, result = pcall(function()
+        local scriptContent = game:HttpGet(scriptUrl)
+        return loadstring(scriptContent, scriptName)()
+    end)
+    
+    if success then
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "✅ ZyphraxHub",
+            Text = scriptName .. " script loaded successfully!",
+            Icon = "rbxassetid://125623993645104",
+            Duration = 3
+        })
+    else
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "❌ ZyphraxHub",
+            Text = "Failed to load " .. scriptName .. ": " .. tostring(result),
+            Icon = "rbxassetid://125623993645104",
+            Duration = 5
+        })
+    end
+end
+
+-- Main execution
+local scriptName = getGameScript()
+if scriptName then
+    loadGameScript(scriptName)
+end
