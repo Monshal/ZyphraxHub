@@ -62,9 +62,35 @@ local function loadGameScript(scriptName)
     })
     
     -- Attempt to load the script from GitHub
-    local success, result = pcall(function()
-        local scriptContent = game:HttpGet(scriptUrl)
-        return loadstring(scriptContent, scriptName)()
+    local success, errorMsg = pcall(function()
+        local scriptContent
+        
+        -- Fetch script from GitHub with error handling
+        local httpSuccess, httpResult = pcall(function()
+            return game:HttpGet(scriptUrl)
+        end)
+        
+        if not httpSuccess then
+            error("Failed to fetch from GitHub: " .. tostring(httpResult))
+        end
+        
+        scriptContent = httpResult
+        
+        if not scriptContent or scriptContent == "" then
+            error("Script content is empty")
+        end
+        
+        -- Load the script
+        local scriptFunc = loadstring(scriptContent, scriptName)
+        if not scriptFunc then
+            error("Failed to parse script")
+        end
+        
+        -- Set environment to global for script to access game, print, etc
+        setfenv(scriptFunc, getfenv())
+        
+        -- Execute the script
+        scriptFunc()
     end)
     
     if success then
@@ -77,10 +103,11 @@ local function loadGameScript(scriptName)
     else
         game.StarterGui:SetCore("SendNotification", {
             Title = "❌ ZyphraxHub",
-            Text = "Failed to load " .. scriptName .. ": " .. tostring(result),
+            Text = "Failed to load " .. scriptName .. ":\n" .. tostring(errorMsg),
             Icon = "rbxassetid://125623993645104",
             Duration = 5
         })
+        print("[ZyphraxHub ERROR] " .. scriptName .. ": " .. tostring(errorMsg))
     end
 end
 
